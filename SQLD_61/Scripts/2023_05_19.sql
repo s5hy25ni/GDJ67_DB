@@ -64,7 +64,55 @@ SELECT *
 	FROM PLAYER p JOIN TEAM t -- 선행테이블이 앞에 나옴
 	ON p.TEAM_ID = t.TEAM_ID ;
 
-
+SELECT p.*, TEAM_NAME, TEAM_NAME
+-- TEAM, TEAM_NAME -- FROM 절 ALIAS를 사용하여  지정해줘야 함
+	FROM TEAM t JOIN PLAYER p
+	ON p.TEAM_ID = t.TEAM_ID;
+	
+-- 급여가 1250 초과하면서 직무가 SALESMAN인 직원의 정보와 부서명 조회
+-- 사용되는 테이블 EMP:직원 정보, 급여, 직무
+-- 				DEPT : 부서명
+-- EMP와 DEPT는 DEPTNO로 연관 컬럼을 가지고 있음
+-- 조건 SAL > 1250, JOB = 'SALESMANE'
+SELECT *
+	FROM EMP e;
+SELECT *
+	FROM DEPT d;
+SELECT ENAME, JOB, SAL, DEPTNO
+	FROM EMP e
+	WHERE SAL > '1250'
+		AND JOB = 'SALESMAN';
+		
+SELECT ENAME, JOB, SAL, DNAME --e.DEPTNO
+	FROM EMP e JOIN DEPT d
+	ON e.DEPTNO = d.DEPTNO
+	WHERE SAL > '1250'
+		AND JOB = 'SALESMAN';
+		
+-- 축구 선수의 정보를 조회
+-- 축구선수명(등번호) ex) 박지성(7)
+-- CONCATENATION 오라클은 || 연산, 나머지는 +, CONCAT 지원
+SELECT PLAYER_NAME , BACK_NO
+	FROM PLAYER p ;
+	
+SELECT PLAYER_NAME || '(' || BACK_NO  || ')' 축구선수
+	FROM PLAYER p ;
+	
+-- BACK_NO 없는 애들 조회 -> 없으면 00 출력
+SELECT PLAYER_NAME || '(' || NVL(BACK_NO, '00')  || ')' 축구선수
+	FROM PLAYER p
+	WHERE BACK_NO IS NULL ;
+	
+-- 190 page 선수들의 키에서 몸무게를 뺀 값
+SELECT PLAYER_NAME , HEIGHT , WEIGHT , HEIGHT-WEIGHT "키-몸무게"
+	FROM PLAYER p ;
+-- 191 page 다음과 같은 선수들의 출력 형태를 만들어 본다.
+-- 선수명 선수, 키 cm, 몸무게 kg
+SELECT PLAYER_NAME || ' 선수' 이름, HEIGHT || ' cm' 키, WEIGHT || ' kg' 몸무게
+	FROM PLAYER p ;
+	
+SELECT ENAME || SAL , SAL || ENAME
+	FROM EMP e ;
 
 
 
