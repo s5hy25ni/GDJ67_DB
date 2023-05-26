@@ -1,0 +1,327 @@
+-- NULL 연산
+SELECT SAL , COMM 
+	FROM EMP;
+	
+SELECT SAL, COMM, SAL+COMM -- NULL 과의 연산은 모두 NULL
+	FROM EMP;
+	
+SELECT SAL, COMM, SAL || COMM -- CONCAT은 NULL 연산은 없는 값 처럼 처리
+	FROM EMP;
+	
+SELECT SAL, COMM, ENAME || COMM -- CONCAT은 NULL 연산은 없는 값 처럼 처리
+	FROM EMP;
+	
+SELECT CONCAT(ENAME, COMM)
+	FROM EMP;
+	
+SELECT *
+	FROM EMP e 
+	WHERE COMM > 1;
+
+SELECT *
+	FROM EMP e
+	WHERE COMM < 1; -- NULL은 크던 작던 값으로 확인하지 않는다. 하지만 ORDER BY에서는 가장 큰 값으로 인식한다.
+	
+SELECT *
+	FROM EMP e
+	ORDER BY COMM DESC ;
+	
+SELECT *
+	FROM EMP e 
+	WHERE COMM = NULL; -- 비교 연산의 결과가 NULL
+	
+SELECT *
+	FROM EMP e 
+	WHERE COMM IS NULL;
+
+SELECT *
+	FROM EMP e 
+	WHERE COMM IS NOT NULL;
+
+SELECT *
+	FROM EMP e 
+	WHERE NOT COMM IS NULL;
+	
+--SELECT *
+--	FROM EMP e 
+--	WHERE COMM NOT IS NULL; -- NOT은 SQL 연산자 앞에 붙이지 않는다.
+
+SELECT e.COMM
+	FROM EMP e, EMP e2 ; -- 자기 자신과 조인 => ROW*ROW
+	
+SELECT e.COMM
+	FROM EMP e, EMP e2
+	WHERE e.COMM = e2.COMM; -- NULL은 JOIN 대상에서 제외
+	
+	
+-- ROWNUM 절차적 순서
+-- FROM -> SELECT
+	
+SELECT ROWNUM, p.* -- RDBMS가 SELECT절을 출력하면서 만들어지는 값
+	FROM PLAYER p ;
+	
+SELECT ROWNUM, HEIGHT
+	FROM PLAYER p 
+	ORDER BY HEIGHT DESC; -- FROM -> SELECT -> ORDER BY
+	
+-- 축구선수들을 키가 큰 순으로 정렬
+-- 키가 입력되지 않은 선수들은 제외
+-- 키를 정렬하여 순서대로 1부터 10등까지만 출력해주세요
+SELECT pt.*, ROWNUM
+	FROM (SELECT PLAYER_NAME , HEIGHT 
+			FROM PLAYER p 
+			WHERE HEIGHT IS NOT NULL
+			ORDER BY HEIGHT DESC ) pt
+	WHERE ROWNUM < 11;
+--	WHERE PLAYER_ID = '2000091'; -- WHERE 에서 사용할 수 있는 컬럼은 FROM절에 있는 컬럼이어야 한다.
+
+SELECT * 
+	FROM EMP e 
+	WHERE ROWNUM = 1; -- 무조건 1부터만 가능
+	
+-- 급여순으로 EMP 정렬
+SELECT ep.*, ROWNUM
+	FROM (SELECT e.* -- SUB QUERY의 기술 INLINE VIEW
+		FROM EMP e 
+		ORDER BY SAL DESC ) ep;
+		
+-- 5에서 10등의 직원
+SELECT *
+	FROM (
+		SELECT ep.*, ROWNUM rn
+			FROM (SELECT ENAME, SAL
+					FROM EMP e
+					ORDER BY SAL DESC) ep 
+	)
+	WHERE rn BETWEEN 5 AND 10;
+
+CREATE VIEW EMP_SORT AS SELECT ROWNUM rn, ENAME, SAL
+							FROM (SELECT ENAME, SAL
+							FROM EMP e
+							ORDER BY SAL DESC);
+						
+SELECT *
+	FROM EMP_SORT es 
+	WHERE rn BETWEEN 5 AND 10;
+
+-- 228 page
+-- LOWER UPPER
+-- 이름, 중복 이메일 등을 확인할 때
+-- Smith smith SMITH
+SELECT E_PLAYER_NAME, UPPER(E_PLAYER_NAME), LOWER(E_PLAYER_NAME) 
+	FROM PLAYER p;
+	
+-- 축구선수들 중에서 KIM으로 시작되는 성을 가진 선수를 조회
+SELECT *
+	FROM PLAYER p 
+	WHERE E_PLAYER_NAME IS NOT NULL
+		AND E_PLAYER_NAME LIKE UPPER('KIM%');
+		
+
+-- CONCATENATION || +
+SELECT MGR || SAL, CONCAT(CONCAT(MGR, SAL),ENAME) 
+	FROM EMP e ;
+
+SELECT SAL, SAL || SAL -- 숫자와 문자를 따지지 않는다. -> 문자+문자로
+	FROM EMP e ;
+SELECT SAL, SAL + SAL
+	FROM EMP e ;
+
+SELECT MGR || SAL, CONCAT(CONCAT(MGR, SAL), ENAME),
+		ENAME || '(' || NVL(COMM, 0) || ')' -- NVL : NULL을 뒷 값으로 변경
+		FROM EMP;
+
+SELECT ENAME, COMM, NVL(COMM, 0)
+	FROM EMP e 
+	WHERE ENAME = 'SMITH';
+
+-- NULL 연산
+SELECT 1+1, '1'+1, CONCAT(1,1) , 1 || 1, 
+	CONCAT('NULL',1) , CONCAT(NULL,1), NULL+1, NULL || 1
+	-- "" || 1 -- ""은 값이 아니다
+	FROM DUAL
+-- 조건은 WHERE절에서만 가능
+--	WHERE NULL = NULL; -- 무조건 FALSE
+	
+SELECT *
+	FROM EMP e
+--	WHERE COMM = NULL; 
+	
+SELECT *
+	FROM EMP e 
+	WHERE 1<>1; -- ^= != NOT
+	
+SELECT PLAYER_NAME , LENGTH (PLAYER_NAME), LENGTH(11)
+	FROM PLAYER p ;
+	
+SELECT PLAYER_NAME ,
+		INSTR(PLAYER_NAME, '장'), -- INDEX 0부터 시작 X
+		SUBSTR(PLAYER_NAME, 5, 1), -- 결과가 없으면 NULL 반환
+		SUBSTR(PLAYER_NAME, -2, 1), -- (-)는 뒤에서부터 읽어옴, 잘릴 값보다 자를 값이 커도 상관없음
+	FROM PLAYER p ;
+
+SELECT COUNT(*) , COUNT(NICKNAME)	-- 집계함수는 NULL을 연산대상으로 잡지 않음
+	FROM PLAYER p 
+	WHERE LENGTH (PLAYER_NAME) = 4;
+	
+SELECT '              XXX　',
+		TRIM('              XXX　'), -- WHITE SPACE만 제거
+		LTRIM('XXXYAABBCC　', 'BXA'),
+		LTRIM('XXXYAABBCC　', 'CBAX'),
+		LTRIM('XXXYAABBCC　', 'CBAY'),
+		LTRIM('XXXYAABBCC　', 'XYA'), -- 검색할 애 없으면 안지워짐
+		RTRIM(('              XXX　'), '　')
+	FROM DUAL ;
+	
+-- 사원번호 만들 때 많이 사용하는 것
+-- 202305001 	
+SELECT EMPNO, LENGTH(EMPNO), DEPTNO, LENGTH (DEPTNO),
+	'HR'||CONCAT(TO_CHAR(SYSDATE,'YYYYMM'),LPAD(EMPNO,6,'-')),
+	LPAD(EMPNO,10,TO_CHAR(SYSDATE,'YYYYMM')),
+	LPAD('*****',10,'goodee0001')
+	FROM EMP e ;
+	
+SELECT PLAYER_ID ,RPAD(SUBSTR(PLAYER_ID,1,4),LENGTH(PLAYER_ID),'*') r1,
+	PLAYER_NAME ,
+	RPAD(SUBSTR(PLAYER_NAME,1,4),LENGTH(PLAYER_NAME),'*') r2,
+	RPAD(SUBSTR(PLAYER_NAME,1,4),10,'*') r3
+	FROM PLAYER p ;
+	
+SELECT INSTR('HAPPY NEW YEAR','NEW'), -- 1부터 시작 
+		INSTR('HAPPY NEW YEAR','NO'), -- 0이 나오면 없다는 뜻
+		ROUND('3.14567',1)
+	FROM DUAL;
+
+------------------------------------------------- 문자관련 FUNCTION
+
+
+
+-- 223page
+SELECT ABS(-1) a, ABS(0) b, ABS(10) c,
+		SIGN(-11) d, SIGN(0) e, SIGN(100) f,
+		10/3 g, MOD(10, 3) h,
+		POWER(10,2) j,
+		POWER(10,7) k,
+		ROUND(10, 4) l, TRUNC(10/4) m
+		FROM DUAL;
+	
+-- CEIL / FLOOR
+SELECT CEIL (0.1), FLOOR(0.1), -- 최근접 최대 정수, 최근접 최소 정수
+		CEIL (-0.5), FLOOR(-0.5)
+	FROM DUAL;
+
+-- 225page 날짜 관련 함수
+-- 날짜 java.util.Date / java.util.Calendar <==> 문자형 날짜 java.util.SimpleDateFormat()
+-- TO_CHAR() 문자열로 변환, TO_DATE() 날짜 타입으로 변환
+
+SELECT 1, '1', SYSDATE, CURRENT_DATE , CURRENT_TIMESTAMP -- 숫자, 문자
+	FROM DUAL;
+
+-- EXTRACT : 숫자로 가지고 온다. 자동형변환이 되고, 년-원-일을 한 번에 가져오기 힘들다.
+SELECT HIREDATE ,
+	EXTRACT(YEAR FROM HIREDATE) 년,
+	EXTRACT(MONTH FROM HIREDATE) 월,
+	EXTRACT(DAY FROM HIREDATE) 일
+	FROM EMP e ;
+
+-- TO CHAR : 특정 타입을 문자형으로 변환
+SELECT HIREDATE,
+	TO_CHAR(HIREDATE, 'YYYYMMDD') 연월일,
+	TO_CHAR(HIREDATE ,  'YYYY') 연1,
+	TO_CHAR(HIREDATE ,  'YY') 연2,
+	TO_CHAR(HIREDATE ,  'MM') 월,
+	TO_CHAR(HIREDATE ,  'QQ'), -- 2000년대 이후?
+	TO_CHAR(HIREDATE ,  'DD') 일,
+	TO_CHAR(HIREDATE ,  'YYYYMMDDHHMISS') 일	
+	FROM EMP e ;
+
+SELECT TO_CHAR(HIREDATE, 'YYYY-MM-DD HH24:MI:SS') ,
+	TO_CHAR(HIREDATE, 'YYYY.MM.DD HH24:MI:SS') , -- 문자는 안된다
+	FROM EMP e ;
+
+-- 한 달 전, 한 달 후, 몇 달 후
+SELECT SYSDATE,
+	ADD_MONTHS('20230525', -2) 월빼기,
+	ADD_MONTHS('20230525', -12) "1년빼기",
+	SYSDATE +7 일더하기,
+	SYSDATE +1/10 
+	FROM DUAL;
+
+-- SELECT, FROM, WHERE, ORDER BY, JOIN ON
+SELECT LEVEL
+	FROM DUAL
+	CONNECT BY LEVEL <= 12; -- 입사일 기준으로 사람들이 몇 명 들어왔는지 알고 싶을 때
+
+-- 238page 변환형 함수
+-- 1) 암시적변환 EX) 컬럼이 DATE 타입인데 입력시 VALUES('20230301')
+-- 2) 명시적변환 TO_CHAR(), TO_DATE(), TO_NUMBER();
+	
+-- 날짜 입력시 사용하는 경우가 많음
+-- javascript에서의 날짜와 형태가 다름 ex) 화면에서 년월일의 date를 받아오면 2023-5-25
+	
+-- ./- 만 사용, 불러오는 값과 형식이 같아야 함
+SELECT 
+--	TO_DATE('20230525151000', 'YYYMMDDHHMISS'),
+--	TO_DATE('2023-01-01-1-4-2', 'YYY-MM-DD-HH24:MI:SS')
+	TO_DATE('2023-01-01-1-4-2', 'YYYY-MM-DD-HH24-MI-SS'),
+	TO_DATE('20230525', 'YYYYMMDD'),
+	TO_DATE('202305251510', 'YYYYMMDDHH24MI')
+	FROM DUAL;
+
+SELECT SYSDATE, EXTRACT (MONTH FROM SYSDATE),
+		TO_CHAR(SYSDATE, 'MM'),
+		LPAD('1', 2, 0)
+		FROM DUAL;
+
+-- CHAR
+INSERT INTO PLAYER p (PLAYER_ID, PLAYER_NAME, TEAM_ID)
+	VALUES('77','이상규','K01');
+
+SELECT *
+	FROM PLAYER p 
+	WHERE PLAYER_ID = '77';
+
+UPDATE PLAYER SET JOIN_YYYY = '77' WHERE PLAYER_ID ='77';
+UPDATE PLAYER SET NATION = '77' WHERE PLAYER_ID ='77';
+
+SELECT PLAYER_ID , PLAYER_NAME , JOIN_YYYY , NATION 
+	FROM PLAYER p 
+	WHERE PLAYER_ID ='77';
+
+SELECT *
+	FROM PLAYER p 
+	WHERE PLAYER_ID = JOIN_YYYY -- CHAR는 값이 같다면 공백은 채워서 비교
+		AND PLAYER_ID = NATION;
+
+SELECT *
+	FROM PLAYER p 
+--	WHERE TRIM(PLAYER_ID) = TRIM(NATION); -- 됨
+--	WHERE PLAYER_ID = TRIM(NATION); -- 안 됨
+--	WHERE TRIM(PLAYER_ID) = NATION; -- TRIM이 크기의 공백을 제거하고 varchar로 만듦
+	WHERE TO_NUMBER(PLAYER_ID) = TO_NUMBER('77') ; 	
+
+SELECT *
+	FROM PLAYER p 
+	WHERE PLAYER_ID ='77'
+		AND TO_NUMBER(PLAYER_ID) = TO_NUMBER(NATION) -- 앞에 77로 검색해서 가능
+		AND TO_NUMBER(PLAYER_ID) = TO_NUMBER(JOIN_YYYY)
+		AND PLAYER_ID = JOIN_YYYY -- CHAR : CHAR
+--		AND PLAYER_ID = NATION  -- CHAR : VARCHAR
+--		AND PLAYER_ID = TRIM(NATION); -- CHAR의 공백을 제거해야 함
+		AND TRIM(PLAYER_ID) =NATION ;
+--		AND PLAYER_ID = TO_CHAR(NATION) --안 됨
+--		AND TO_CHAR(PLAYER_ID) = NATION -- 안 됨
+--		AND TO_CHAR(PLAYER_ID) = TO_CHAR(NATION); -- 안 됨  
+--		AND LENGTH(TO_CHAR(PLAYER_ID)) = LENGTH (TO_CHAR(NATION)); -- 얘도 안됨 7 : 2
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
