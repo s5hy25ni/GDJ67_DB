@@ -1,0 +1,80 @@
+-- CARTESIAN PRODUCT, Cross Join
+-- 테이블의 join은 두 개씩 조인이 된다.
+-- ANSI/ISO JOIN 문법, FROM절 조인
+
+-- 문제) 사원들의 정보와 사원의 부서명을 출력
+SELECT *
+	FROM EMP e ;
+SELECT *
+	FROM DEPT d ;
+	
+SELECT EMPNO,ENAME,JOB,DNAME
+	FROM EMP e JOIN DEPT d 
+	ON e.DEPTNO = d.DEPTNO ;
+	
+-- INNER JOIN
+-- FROM 절의 alias는 사용이 되었다면 반드시 alias로 사용(혼합X)
+SELECT PLAYER_ID , PLAYER_NAME, TEAM_NAME
+	FROM PLAYER p INNER JOIN TEAM t 
+	ON p.TEAM_ID = t.TEAM_ID ;
+	
+SELECT PLAYER_ID , PLAYER_NAME, TEAM_NAME
+	FROM PLAYER INNER JOIN TEAM
+	ON PLAYER.TEAM_ID = TEAM.TEAM_ID ;
+	
+SELECT *
+	FROM PLAYER p INNER JOIN TEAM t 
+	USING (TEAM_ID);
+	
+-- NON-EQUI JOIN(비등가 조인)
+-- PK-FK의 관계에서 발생되는 JOIN이 아니라
+-- 범위를 가진 집합에서 특정 값을 선택할 때 사용
+
+-- TEAM_ID <-> HOMETEAM_ID
+-- PK-FK 관계는 반드시 컬럼의 타입과 크기가 같아야 함
+
+SELECT *
+	FROM EMP;
+	
+CREATE TABLE SAL_GRADE(
+	GRADE NUMBER,
+	LOSAL NUMBER,
+	HISAL NUMBER
+);
+
+INSERT INTO SAL_GRADE sg 
+	VALUES(1, 500, 1000);
+
+INSERT INTO SAL_GRADE sg 
+	VALUES(2, 1001, 2000);
+	
+INSERT INTO SAL_GRADE sg 
+	VALUES(3, 2001, 3000);
+	
+INSERT INTO SAL_GRADE sg 
+	VALUES(4, 3001, 4000);
+	
+INSERT INTO SAL_GRADE sg 
+	VALUES(5, 4001, 5000);
+	
+SELECT *
+	FROM SAL_GRADE sg ;
+	
+SELECT ENAME, JOB, SAL, GRADE 등급
+	FROM EMP e JOIN SAL_GRADE sg 
+	ON e.SAL >= sg.LOSAL AND e.SAL <= sg.HISAL ;
+	
+SELECT ENAME, JOB, SAL, GRADE 등급
+	FROM EMP e JOIN SAL_GRADE sg 
+	ON e.SAL BETWEEN sg.LOSAL AND sg.HISAL ;
+	
+SELECT ENAME, JOB, SAL, GRADE 등급
+	FROM EMP e, SAL_GRADE sg 
+	WHERE e.SAL BETWEEN sg.LOSAL AND sg.HISAL ;
+	
+-- JOIN은 ANSI/ISO 표준
+-- Standard JOIN
+-- INNER JOIN 문법 : ON절(필수), USING을 통해 중복되는 컬럼을 하나로 처리(FROM alias 사용 안해도 됨)
+-- NATURAL JOIN 문법 : JOIN의 대상이 될 수 있는 모든 컬럼에 대해 자동으로 JOIN 수행
+-- OUTER JOIN 문법 : 특정한 선행/후행 테이블을 기준으로 JOIN 수행
+-- CROSS JOIN 문법 : JOIN문법을 통해 CARTESIAN PRODUCT를 수행(다차원 조인)
