@@ -1,0 +1,141 @@
+-- Standard Join 표준 조인 (ANSI/ISO)의 표준
+-- INNER JOIN은 ON절과 USING절을 사용하여 JOIN의 대상을 결정
+-- ON절은 참여하는JOIN의 커럼이 반복해서 나오는 반면
+-- USING절로 사용하면 JOIN에 참여하는 컬럼 맨 앞에 한 번 나옴
+
+-- NATURAL JOIN
+-- 참여하는 대상은 선택하지 않아도 자동으로 찾아서 모두 조인
+
+--OUTER JOIN
+--LEFT OUTERJOIN, RIGHT OUTERJOIN, FULL OUTERJOIN
+--선행테이블 혹은 후행테이블을 구분해야한다
+
+--NULL은 JOIN의 대상이 되지 않는다
+SELECT e1.COMM 
+   FROM EMP e1 JOIN EMP e2
+   ON e1.COMM = e2.COMM ;
+   
+SELECT *
+   FROM EMP e INNER JOIN DEPT d 
+   ON e.DEPTNO = d.DEPTNO ;
+   
+SELECT DEPTNO 
+   FROM EMP e  INNER JOIN DEPT d 
+      USING(DEPTNO);
+      
+SELECT DEPTNO 
+   FROM EMP e NATURAL JOIN DEPT d ;
+
+	
+--EQUI JOIN 등가 조인
+-- 컬럼명이 같을 필요는 없지만 타입과 크기는 같아야 함
+SELECT *
+   FROM EMP e JOIN DEPT d 
+      ON e.EMPNO = d.DEPTNO ;
+SELECT *
+   FROM STADIUM s JOIN STADIUM s2
+      ON s.STADIUM_NAME = s2.STADIUM_ID ;
+      
+SELECT *
+   FROM EMP e NATURAL JOIN EMP e2;--NULL 빠짐
+   
+SELECT DEPTNO 
+   FROM EMP e  INNER JOIN DEPT d 
+      USING(DEPTNO);
+      
+SELECT *
+   FROM STADIUM s 
+   WHERE HOMETEAM_ID IS NULL;
+   
+SELECT *
+   FROM STADIUM s JOIN TEAM t 
+   ON s.HOMETEAM_ID = t.TEAM_ID ;
+   
+SELECT *
+   FROM STADIUM s  JOIN TEAM t 
+   USING(TEAM_ID);  --안댐
+   
+SELECT *
+   FROM STADIUM s NATURAL JOIN TEAM t ;
+
+	
+CREATE TABLE T1(
+	A VARCHAR2(10),
+	B VARCHAR2(10),
+	D NUMBER
+) ;
+	
+CREATE TABLE T2(
+	A CHAR(6),
+	C CHAR(6),
+	D VARCHAR2(2)
+)
+
+ALTER TABLE T2 MODIFY A CHAR(10);
+
+INSERT INTO SQLD.T2
+(A, C, D)
+VALUES('CC', '300', 3);
+
+DELETE FROM T2 WHERE D=3;
+
+-- INNER JOIN
+SELECT *
+	FROM T1 t1 JOIN T2 t2
+		ON t1.A = t2.A; -- 같은 타입, 같은 크기, 같은 값 // CHAR(3) AAA 와 VARCHAR2(3) AAA는 비교 가능
+		
+SELECT *
+	FROM T1 t1 JOIN T2 t2
+	ON T1.D  = T2.D ; -- VARCHAR2 와 NUMBER는 자동 형변환되어 비교
+   
+ -- NATURAL JOIN
+ ALTER TABLE SQLD.T2 MODIFY A VARCHAR2(10) ;
+
+SELECT *
+   FROM T1 t1 NATURAL JOIN T2 t2 ;
+  
+ -- USING절 문법(컬럼, 컬럼) 두 개의 컬럼이 AND 조건으로 됨
+SELECT *
+	FROM T1 t1 JOIN T2 t2
+	USING(D, A); -- NATURAL JOIN
+	
+SELECT *
+	FROM T1 t1 JOIN T2 t2
+	ON (t1.A || t1.D) = (t2.A || t2.D);
+
+SELECT A||D, t1.*
+	FROM T1 t1;
+SELECT A||D, t2.*
+	FROM T2 t2;
+	
+SELECT *
+	FROM T1 t1 JOIN T2 t2
+	ON T1.D  = T2.D AND t1.A = t2.A;
+
+-- LEFT OUTER JOIN
+SELECT *
+	FROM T1 t1  LEFT OUTER JOIN T2 t2
+	USING(A);
+	
+SELECT *
+	FROM T2 t2  LEFT OUTER JOIN T1 t1
+	USING(A);
+
+SELECT *
+	FROM T1 t1 , T2 t2
+	WHERE T1.A(+) = T2.A
+	
+SELECT *
+	FROM T1 t1 FULL OUTER JOIN T2 t2
+	USING (A);
+
+--SELECT *
+--	FROM T1 t1 , T2 t2
+--	WHERE T1.A(+) = T2.A(+) -- ERROR
+
+SELECT TEAM_ID , ROUND(AVG(HEIGHT),2) 
+	FROM PLAYER p 
+	GROUP BY TEAM_ID 
+	UNION ALL
+	SELECT '총계' ,ROUND(AVG(HEIGHT),2) 
+		FROM PLAYER p ;

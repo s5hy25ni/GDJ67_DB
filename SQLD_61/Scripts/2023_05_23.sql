@@ -1,4 +1,4 @@
--- where절 조건절의 활용
+ -- where절 조건절의 활용
 
 -- FTS(full table scan)
 -- optimizer 규칙 : CBO(Cost Base Optimizer), RBO(Rule Base Optimizer)

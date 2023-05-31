@@ -193,3 +193,81 @@ SELECT TEAM_ID,
 	FROM PLAYER p 
 	GROUP BY TEAM_ID
 	ORDER BY TEAM_ID ;
+	
+
+-- Oracle에서는 DDL이 무조건 Auto-Commit으로 동작이 된다.
+-- 즉, DDL 실행전 작업한 모든 내용은 DDL이 실행이 되면 자동으로 Commit
+-- 하지만 MS Server에서는 따로 동작 된다. DDL과 DML이 다른 RollBack과 Commit을 가진다.
+	
+SELECT EMPNO
+	FROM EMP
+	ORDER BY ENAME DESC; -- ORDER BY SQL 문의 가장 마지막에 실행된 절
+															-- SELECT에 출력된 컬럼 뿐만 아니라 FROM절에 있는 컬럼도 선택이 됨
+	
+-- 집계 함수는 WHERE에 사용하지 못하고, SELECT절/ HAVING절/ORDER BY절 에서 사용 가능
+SELECT AVG(SAL)
+	FROM EMP
+	GROUP BY DEPTNO 
+	ORDER BY AVG(SAL), COUNT(*); -- 집계함수임
+	
+SELECT AVG(SAL) 평균
+	FROM EMP
+	GROUP BY DEPTNO 
+	ORDER BY AVG(SAL), 평균, 평균, COUNT(*); -- 2번 써도 상관 없음
+	
+SELECT SAL + COMM 
+	FROM EMP e 
+	ORDER BY SAL+COMM; -- 컬럼임(연산X)
+	
+SELECT SAL + COMM AS SC
+	FROM EMP e 
+	ORDER BY SAL+COMM ; -- 연산임
+	
+-- TOP N 쿼리
+-- ROWNUM
+-- TABLE에 저장되어 있는 순서대로 SELECT절에 나가면 번호를 매겨줌
+SELECT ROWNUM, e.*
+	FROM EMP e 
+	WHERE ROWNUM < 2; -- ROWNUM은 1부터 만들어지므로 ROWNUM = 2는 안된다.
+	
+-- 문제) 급여가 높은 순서대로 번호를 매겨주세요.
+-- INLINE VIEW(SUBQUERY) => VIEW TABLE
+SELECT ROWNUM, e.*
+FROM	(
+					SELECT *
+						FROM EMP 
+						ORDER BY SAL DESC) e;
+						
+-- WINDOWS절
+SELECT e.*, ROW_NUMBER () OVER(ORDER BY SAL DESC)
+	FROM EMP e ;
+	
+SELECT *
+	FROM PLAYER p JOIN TEAM t 
+	ON p.TEAM_ID = t.TEAM_ID 
+--		AND p.TEAM_ID ='K01'; -- 맞지 않으나 실행은 됨
+	WHERE p.TEAM_ID = 'K01'; -- 표준 문법
+	
+SELECT *
+	FROM PLAYER p , TEAM t 
+	WHERE p.TEAM_ID = t.TEAM_ID 
+		AND t.TEAM_ID = 'K01';
+		
+-- SCHEDULE 테이블은 홈팀과 원정팀의 경기 결과를 가지고 있다.
+-- 홈팀이 원정팀을 3점 이상으로 이긴 경기를 조회
+-- 홈팀명, 원정팀명, 경기장명
+SELECT t.TEAM_NAME HOMETEAM, t2.TEAM_NAME AWAYTEAM, STADIUM_NAME STADIUM
+	FROM SCHEDULE s JOIN TEAM t 
+	ON s.HOMETEAM_ID = t.TEAM_ID 
+	JOIN TEAM t2 
+	ON s.AWAYTEAM_ID = t2.TEAM_ID 
+	JOIN STADIUM s2
+	ON s.STADIUM_ID = s2.STADIUM_ID 
+	WHERE HOME_SCORE > AWAY_SCORE +2;
+	
+SELECT t.TEAM_NAME HOMETEAM, t2.TEAM_NAME AWAYTEAM, STADIUM_NAME STADIUM
+	FROM SCHEDULE s , TEAM t , TEAM t2 , STADIUM s2 
+	WHERE s.HOMETEAM_ID = t.TEAM_ID 
+		AND s.AWAYTEAM_ID = t2.TEAM_ID 
+		AND s.STADIUM_ID = s2.STADIUM_ID 
+		AND HOME_SCORE > AWAY_SCORE +2;
