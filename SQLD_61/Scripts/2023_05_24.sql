@@ -157,7 +157,7 @@ SELECT PLAYER_NAME , LENGTH (PLAYER_NAME), LENGTH(11)
 SELECT PLAYER_NAME ,
 		INSTR(PLAYER_NAME, '장'), -- INDEX 0부터 시작 X
 		SUBSTR(PLAYER_NAME, 5, 1), -- 결과가 없으면 NULL 반환
-		SUBSTR(PLAYER_NAME, -2, 1), -- (-)는 뒤에서부터 읽어옴, 잘릴 값보다 자를 값이 커도 상관없음
+		SUBSTR(PLAYER_NAME, -2, 1) -- (-)는 뒤에서부터 읽어옴, 잘릴 값보다 자를 값이 커도 상관없음
 	FROM PLAYER p ;
 
 SELECT COUNT(*) , COUNT(NICKNAME)	-- 집계함수는 NULL을 연산대상으로 잡지 않음
@@ -169,8 +169,21 @@ SELECT '              XXX　',
 		LTRIM('XXXYAABBCC　', 'BXA'),
 		LTRIM('XXXYAABBCC　', 'CBAX'),
 		LTRIM('XXXYAABBCC　', 'CBAY'),
-		LTRIM('XXXYAABBCC　', 'XYA'), -- 검색할 애 없으면 안지워짐
+		LTRIM('XXXYAABBCC　', 'XYAC') -- 검색할 애 없으면 안지워짐
+	FROM DUAL ;
+
+SELECT 
+		LTRIM('XXXYAABBCC　', 'BXA'),
+		LTRIM('XXXYAABBCC　', 'BXYB'),
+		LTRIM('XXXYAABBCC　', 'YABC'),
+		LTRIM('XXXYAABBCC　', 'XYABC'),
+		RTRIM(('              XXX　'), '　'),
 		RTRIM(('              XXX　'), '　')
+	FROM DUAL ;
+
+SELECT 
+		RTRIM(('              XXX　'), '　'),
+		RTRIM(('              XXX　'), '　X')
 	FROM DUAL ;
 	
 -- 사원번호 만들 때 많이 사용하는 것
@@ -179,6 +192,9 @@ SELECT EMPNO, LENGTH(EMPNO), DEPTNO, LENGTH (DEPTNO),
 	'HR'||CONCAT(TO_CHAR(SYSDATE,'YYYYMM'),LPAD(EMPNO,6,'-')),
 	LPAD(EMPNO,10,TO_CHAR(SYSDATE,'YYYYMM')),
 	LPAD('*****',10,'goodee0001')
+	FROM EMP e ;
+
+SELECT LPAD(ENAME ,10,'goodee0001')
 	FROM EMP e ;
 	
 SELECT PLAYER_ID ,RPAD(SUBSTR(PLAYER_ID,1,4),LENGTH(PLAYER_ID),'*') r1,
@@ -202,7 +218,7 @@ SELECT ABS(-1) a, ABS(0) b, ABS(10) c,
 		10/3 g, MOD(10, 3) h,
 		POWER(10,2) j,
 		POWER(10,7) k,
-		ROUND(10, 4) l, TRUNC(10/4) m
+		ROUND(10.12344, 4) l, TRUNC(-10.321324) m, CEIL(-10.321324), FLOOR(-10.321324)
 		FROM DUAL;
 	
 -- CEIL / FLOOR
@@ -241,10 +257,11 @@ SELECT TO_CHAR(HIREDATE, 'YYYY-MM-DD HH24:MI:SS') ,
 
 -- 한 달 전, 한 달 후, 몇 달 후
 SELECT SYSDATE,
-	ADD_MONTHS('20230525', -2) 월빼기,
+	ADD_MONTHS('20230525', 2) 월빼기,
 	ADD_MONTHS('20230525', -12) "1년빼기",
 	SYSDATE +7 일더하기,
-	SYSDATE +1/10 
+	SYSDATE +1/24,
+	SYSDATE -1
 	FROM DUAL;
 
 -- SELECT, FROM, WHERE, ORDER BY, JOIN ON

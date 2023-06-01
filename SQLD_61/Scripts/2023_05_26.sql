@@ -17,6 +17,13 @@ SELECT LOC,
 			ELSE 'WEST'
 		END AS GUBUN
 	FROM DEPT d ;
+
+SELECT 
+	CASE COMM  
+		WHEN NULL THEN -1 
+		ELSE 0
+		.0END
+	FROM EMP e ;
 	
 -- NVL(컬럼, 값) -> 컬럼의 타입과 값의 타입이 같아야 함
 -- THEN 값의 타입과 ELSE 타입이 같아야 함
