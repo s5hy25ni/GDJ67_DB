@@ -1,0 +1,232 @@
+-- Window Function
+
+-- Window Function의 문법
+-- function명() over( [partition by] , [order by] , [windowing] )
+
+-- 1) partition by : select절에서 컬럼을 묶음으로 만듦 => group by
+-- 2) order by : select절에서 순서와 순위를 지정
+-- 3) windowing : 연산되는 범위를 행과 값으로 지정할 수 있음
+
+-- windowing
+-- 		1) 범위(between), non-범위
+--		2) rows (행) / range (값)
+--				BETWEEN UNBOUNDED PRECEDING  : 현재 선택된 행을 기준으로 이전
+--							CURRENT ROW : 현재 선택된 행
+--							FOLLOWING : 현재 선택된 행 기준에서 앞으로
+-- 		EX) SUM(SAL) OVER(PARITITION BY DEPTNO) 
+--								ORDER BY SAL 
+--								ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+--			: 급여의 합계를 구하는데
+--				DEPTNO를 기준으로 그룹하여 계산
+--				급여의 합계의 범위는 현재 기준으로 앞 1ROW 뒤 1ROW를 계산된 결과 출력
+
+-- 1. 순위함수
+-- RANK : 같은 값이라면 같은 숫자로 표기, 다음 값을 +N => 1 2 2 2 5
+-- DENSE_RANK : 같은 값이라면 같은 숫자로 표기, 다음 값을 +1 => 1 2 2 2 3
+-- ROW_NUMBER : ORDER BY 정렬에 의해 숫자를 1부터 차례대로 부여
+
+-- 부서 내에서 (급여를 기준으로) 자신의 순위를 알고 싶다.
+SELECT ENAME, SAL, 
+	RANK() OVER(ORDER BY SAL DESC) RANK,
+	DENSE_RANK() OVER(ORDER BY SAL DESC) DENSE_RANK,
+	ROW_NUMBER() OVER(ORDER BY SAL DESC)
+	FROM EMP
+	ORDER BY 1;
+	
+-- 축구 선수의 정보를 출력하는데 paging으로 처리
+-- 1~10씩 나누어 출력 : JOIN_YYYY 기준
+-- ROWNUM을 사용하여 처리
+SELECT *
+	FROM (
+		SELECT PLAYER_ID , PLAYER_NAME , JOIN_YYYY, ROWNUM rn
+			FROM (
+				SELECT PLAYER_ID , PLAYER_NAME , JOIN_YYYY
+					FROM PLAYER p 
+					ORDER BY JOIN_YYYY , PLAYER_NAME) P2
+	)
+	WHERE rn BETWEEN 1 AND 10;
+
+SELECT *
+	FROM (
+				SELECT PLAYER_ID , PLAYER_NAME , JOIN_YYYY , 
+					ROW_NUMBER() OVER(ORDER BY JOIN_YYYY, PLAYER_NAME) RN
+					FROM PLAYER p )
+	WHERE RN BETWEEN 1 AND 10;
+	
+-- 내 팀 내의 키 순위
+SELECT TEAM_ID , PLAYER_NAME , HEIGHT ,
+	DENSE_RANK() OVER(ORDER BY HEIGHT DESC)
+	FROM PLAYER p 
+	WHERE TEAM_ID = 'K02';
+	
+SELECT TEAM_ID , PLAYER_NAME , HEIGHT ,
+	DENSE_RANK() OVER(PARTITION BY TEAM_ID ORDER BY HEIGHT DESC)
+	FROM PLAYER p
+	WHERE HEIGHT IS NOT NULL;
+	
+-- 집계함수
+-- COUNT, SUM, AVG, MAX, MIN
+SELECT 
+	COUNT(*), -- 0 
+	SUM(SAL),  -- NULL
+	AVG(SAL), -- NULL
+	MAX(SAL), -- NULL
+	MIN(SAL) -- NULL
+	FROM EMP e 
+	WHERE EMPNO = '00';
+	
+-- 같은 매니저를 두고 있는 사원들의 SAL의 합을 구해라
+SELECT EMPNO, ENAME, MGR, SAL,
+	SUM(SAL) OVER(PARTITION BY MGR)
+	FROM EMP e 
+	ORDER BY MGR;
+
+SELECT *
+	FROM EMP e2 JOIN
+								(SELECT MGR, SUM(SAL) SUM_SAL
+									FROM EMP e 
+									GROUP BY MGR)
+	USING(MGR)
+	ORDER BY MGR;
+	
+-- 현재 ROW를 기준으로 이전의 모든 값을 범위로 한다 : RAGNE UBOUNDED PRECEDING
+-- WINDOWING 절은 ORDER BY에 의해 동작
+-- WINDOWING 절의 DEFAULT는 RANGE > UBOUNDED > PRECEDING
+-- RANGE는 값을 따라감 -> 같은 값이라면 같은 계산
+-- 하지만 ROWS는 ROW를 따라감 -> 한 줄씩 계산 가능
+
+-- SUM() OVER();
+-- ORDDER BY의 기본 WINODWING절은 RANGE UNBOUNDED PRECEDING
+-- 근데 기본은 RANGE로 처리가 된다면 같은 값을 가지고 있으면 같은 묶음
+-- 만약 요구사항 현재 자신의 위치에서 위에 값을 누적한다면 RANGE는 XX ROWS 사용
+-- ROWS 사용시 wINDOWING 절을 명시적 작성
+
+-- 같은 매니저를 가지고 있는 사원의 급여 합 출력
+SELECT ENAME, MGR, SAL,
+	SUM(SAL) OVER(PARTITION BY MGR ORDER BY SAL RANGE UNBOUNDED PRECEDING)
+	FROM EMP e ;
+	
+SELECT ENAME, MGR, SAL,
+	SUM(SAL) OVER(PARTITION BY MGR ORDER BY SAL ROWS UNBOUNDED PRECEDING)
+	FROM EMP e ;
+	
+SELECT ENAME, MGR, SAL,
+	SUM(SAL) OVER(PARTITION BY MGR ORDER BY SAL DESC ROWS UNBOUNDED PRECEDING)
+	FROM EMP e ;
+	
+-- MAX/MIN
+-- PARTITION BY에 의해서는 값의 변화를 가지지 않음
+-- 하지만 WINDOWING 절을 사용할 때는 ORDER BY에 의해서 현재 위치에서 탐색 -> 전혀 다른 결과
+-- 따라서 출력의 구성을 위한 ORDER BY는 반드시 메인 SQL 마지막에 작성
+-- 같은 매니저를 두고 있는 사원 중 가장 작은/큰 급여를 출력
+SELECT ENAME, MGR, SAL,	
+	MAX(SAL) OVER(PARTITION BY MGR ORDER BY SAL)
+	FROM EMP e 
+	ORDER BY SAL ;
+	
+SELECT ENAME, MGR, SAL,	
+	MIN(SAL) OVER(PARTITION BY MGR)
+	FROM EMP e 
+	ORDER BY SAL ;
+	
+
+-- AVG
+-- 보통 BETWEEN을 사용하여 범위를 가지고 평균을 구함
+-- 이전 다음의 평균
+
+-- 전체 평균
+SELECT EMPNO, MGR, SAL, 
+	 AVG(SAL) OVER()
+	FROM EMP e ;
+
+SELECT EMPNO, MGR, SAL, (SELECT AVG(SAL) FROM EMP)
+	FROM EMP e ;
+	
+SELECT EMPNO, MGR, SAL,
+	AVG(SAL) OVER(PARTITION BY MGR)
+	FROM EMP e ;
+	
+SELECT EMPNO, MGR, SAL,
+	AVG(SAL) OVER(ORDER BY SAL RANGE UNBOUNDED PRECEDING)  AVG
+	FROM EMP e ;
+	
+SELECT EMPNO, MGR, SAL,
+	AVG(SAL) OVER(ORDER BY SAL ROW UNBOUNDED PRECEDING)  AVG
+	FROM EMP e ;
+	
+-- 같은 매니저, 이전 값 누적
+SELECT EMPNO, MGR, SAL,
+	AVG(SAL) OVER(PARTITION BY MGR ORDER BY SAL RANGE UNBOUNDED PRECEDING)  AVG
+	FROM EMP e ;
+	
+SELECT EMPNO, MGR, SAL,
+	AVG(SAL) OVER(PARTITION BY MGR ORDER BY SAL DESC ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)  AVG
+	FROM EMP e ;
+	
+-- COUNT : 50 이상 150 이하의 갯수
+SELECT EMPNO, MGR, SAL,
+	COUNT(*) OVER(ORDER BY SAL ROWS BETWEEN 50 PRECEDING AND 150 FOLLOWING) -- ROWS -> ROW가 위로 50개, 아래로 150개
+	FROM EMP e ;
+	
+SELECT EMPNO, MGR, SAL,
+	COUNT(*) OVER(ORDER BY SAL RANGE BETWEEN 50 PRECEDING AND 150 FOLLOWING)
+	FROM EMP e ;
+	
+-- 그룹 내 행 순서 함수
+-- 부서별 직원들을 연봉이 높은 순서부터 정렬, 파티션 내에서 가장 먼저 나온 값을 출력
+SELECT DEPTNO , MAX(SAL)
+	FROM EMP e 
+	GROUP BY DEPTNO ;
+	
+SELECT *
+	FROM EMP e1 JOIN (SELECT DEPTNO , MAX(SAL)
+									FROM EMP e 
+								GROUP BY DEPTNO) e2
+							ON e1.DEPTNO = e2.DEPTNO
+		ORDER BY e1.DEPTNO , e1.SAL DESC;
+		
+	
+SELECT ENAME, MGR, SAL,
+	FIRST_VALUE(ENAME) OVER(PARTITION BY DEPTNO ORDER BY SAL DESC)
+	FROM EMP;
+	
+-- 부서별 직원들의 연봉이 높은 순서부터 정렬하고 파티션 가장 마지막에 나온 값을 출력
+SELECT ENAME , MGR, SAL, DEPTNO,
+	LAST_VALUE(ENAME) OVER (PARTITION BY DEPTNO ORDER BY SAL DESC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+	FROM EMP;
+	
+-- LAG와 LEAD
+-- LAG : 뒤 몇 개 후의 값
+-- LEAD : 앞 몇 개 전의 값
+
+-- LAG와 LEAD에 의해 비어있는 값은 NULL이 됨
+-- 3번째 값을 넣으면 그 값이 NULL 대체
+SELECT ENAME, HIREDATE , SAL, LAG(SAL,2,77) OVER (ORDER BY HIREDATE) AS PREV_SAL
+	FROM EMP e 
+	WHERE JOB = 'SALESMAN';
+	
+SELECT ENAME, HIREDATE , SAL, LEAD(SAL,2,00) OVER (ORDER BY HIREDATE) AS PREV_SAL
+	FROM EMP e 
+	WHERE JOB = 'SALESMAN';
+	
+-- NTILE
+-- 반드시 ORDER BY가 필요
+SELECT NTILE(3)  OVER(ORDER BY HIREDATE)
+	FROM EMP e ;
+	
+-- 비율함수
+-- RATIO_TO_REPORT : 전체값에서 자신이 차지하고 있는 비율
+-- PERCENT_RANK : 전체의 개수를 처음을 0 끝을 1로 계산해서 비어있는 공간에 값이 있는지 확인
+-- CUME_DIST : 1을 전체의 개수로 나누어 각 항목에 누적하여 계산
+
+SELECT ENAME, MGR, SAL,DEPTNO,
+	RATIO_TO_REPORT(SAL) OVER(PARTITION BY DEPTNO)
+	FROM EMP e ;
+	
+SELECT ENAME, MGR, SAL,DEPTNO,
+	PERCENT_RANK() OVER(PARTITION BY DEPTNO ORDER BY SAL)
+	FROM EMP e ;
+	
+SELECT ENAME , MGR, SAL, DEPTNO,
+	CUME_DIST() OVER(PARTITION BY DEPTNO ORDER BY SAL)
+	FROM EMP e ;

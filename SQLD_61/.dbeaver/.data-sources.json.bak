@@ -6,7 +6,6 @@
 			"driver": "oracle_thin",
 			"name": "192.168.8.132",
 			"save-password": true,
-			"read-only": true,
 			"configuration": {
 				"host": "192.168.8.132",
 				"port": "1521",
