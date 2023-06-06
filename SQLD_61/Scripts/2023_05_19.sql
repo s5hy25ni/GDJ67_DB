@@ -5,7 +5,7 @@
 -- DELETE FROM 테이블명 WHERE 컬럼 = '값';
 -- UPDATE 테이블명 SET 컬럼 = '값' WHERE 컬럼 = '값';
 
-SELECT * -- wildcasd 모든 것
+SELECT * -- wildcard 모든 것
 	FROM PLAYER p ;
 
 SELECT DISTINCT (TEAM_ID), PLAYER_NAME  
