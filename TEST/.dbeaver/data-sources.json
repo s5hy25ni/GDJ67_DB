@@ -1,0 +1,49 @@
+{
+	"folders": {},
+	"connections": {
+		"oracle_thin-188b289086e-58ae138f54fa77b4": {
+			"provider": "oracle",
+			"driver": "oracle_thin",
+			"name": "192.168.8.132",
+			"save-password": true,
+			"configuration": {
+				"host": "192.168.8.132",
+				"port": "1521",
+				"database": "XE",
+				"url": "jdbc:oracle:thin:@//192.168.8.132:1521/XE",
+				"configurationType": "MANUAL",
+				"home": "C:\\app\\GDJ67\\product\\21c\\dbhomeXE",
+				"type": "dev",
+				"provider-properties": {
+					"@dbeaver-connection-type@": "BASIC",
+					"@dbeaver-sid-service@": "SERVICE"
+				},
+				"auth-model": "oracle_native"
+			}
+		}
+	},
+	"virtual-models": {
+		"oracle_thin-188b289086e-58ae138f54fa77b4": {
+			"C##TEST": {
+				":PLAYER": {
+					"properties": {
+						"erd.diagram.state": {
+							"serialized": "\u003cdiagram version\u003d\"1\" name\u003d\"empty\" time\u003d\"202306131119\"\u003e\u003centities\u003e\u003cdata-source id\u003d\"oracle_thin-188b289086e-58ae138f54fa77b4\"\u003e\u003centity id\u003d\"1\" name\u003d\"PLAYER\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.PLAYER\" order\u003d\"0\" font\u003d\"Segoe UI:9:0\" x\u003d\"84\" y\u003d\"76\"\u003e\u003cpath name\u003d\"C##TEST\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"2\" name\u003d\"TEAM\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.TEAM\" order\u003d\"1\" font\u003d\"Segoe UI:9:0\" x\u003d\"279\" y\u003d\"68\"\u003e\u003cpath name\u003d\"C##TEST\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"3\" name\u003d\"SCHEDULE\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.SCHEDULE\" order\u003d\"2\" font\u003d\"Segoe UI:9:0\" x\u003d\"668\" y\u003d\"129\"\u003e\u003cpath name\u003d\"C##TEST\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"4\" name\u003d\"STADIUM\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.STADIUM\" order\u003d\"3\" font\u003d\"Segoe UI:9:0\" x\u003d\"480\" y\u003d\"130\"\u003e\u003cpath name\u003d\"C##TEST\"/\u003e\u003c/entity\u003e\u003c/data-source\u003e\u003c/entities\u003e\u003crelations\u003e\u003crelation name\u003d\"PLAYER_FK\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.PLAYER.PLAYER_FK\" type\u003d\"fk\" pk-ref\u003d\"2\" fk-ref\u003d\"1\"/\u003e\u003crelation name\u003d\"TEAM_FK\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.TEAM.TEAM_FK\" type\u003d\"fk\" pk-ref\u003d\"4\" fk-ref\u003d\"2\"/\u003e\u003crelation name\u003d\"SCHEDULE_FK\" fq-name\u003d\"\u0026quot;C##TEST\u0026quot;.SCHEDULE.SCHEDULE_FK\" type\u003d\"fk\" pk-ref\u003d\"4\" fk-ref\u003d\"3\"/\u003e\u003c/relations\u003e\u003c/diagram\u003e"
+						}
+					}
+				}
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Development",
+			"color": "255,255,255",
+			"description": "Regular development database",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false,
+			"auto-close-transactions": false
+		}
+	}
+}
