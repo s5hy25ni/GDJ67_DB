@@ -42,6 +42,19 @@
 			}
 		}
 	},
+	"virtual-models": {
+		"oracle_thin-1882272cef0-efee999a0012d57": {
+			"SQLD": {
+				":TEAM": {
+					"properties": {
+						"erd.diagram.state": {
+							"serialized": "\u003cdiagram version\u003d\"1\" name\u003d\"empty\" time\u003d\"202306141000\"\u003e\u003centities\u003e\u003cdata-source id\u003d\"oracle_thin-1882272cef0-efee999a0012d57\"\u003e\u003centity id\u003d\"1\" name\u003d\"TEAM\" fq-name\u003d\"SQLD.TEAM\" order\u003d\"0\" color-bg\u003d\"255,128,64\" font\u003d\"Segoe UI:9:0\" x\u003d\"321\" y\u003d\"20\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"2\" name\u003d\"STADIUM\" fq-name\u003d\"SQLD.STADIUM\" order\u003d\"1\" font\u003d\"Segoe UI:9:0\" x\u003d\"620\" y\u003d\"96\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"3\" name\u003d\"PLAYER\" fq-name\u003d\"SQLD.PLAYER\" order\u003d\"2\" font\u003d\"Segoe UI:9:0\" x\u003d\"20\" y\u003d\"39\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"4\" name\u003d\"SCHEDULE\" fq-name\u003d\"SQLD.SCHEDULE\" order\u003d\"3\" border-width\u003d\"3\" font\u003d\"Segoe UI:9:0\" x\u003d\"990\" y\u003d\"93\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003c/data-source\u003e\u003c/entities\u003e\u003crelations\u003e\u003crelation name\u003d\"PLAYER_FK\" fq-name\u003d\"SQLD.PLAYER.PLAYER_FK\" type\u003d\"fk\" pk-ref\u003d\"1\" fk-ref\u003d\"3\"/\u003e\u003crelation name\u003d\"TEAM_FK\" fq-name\u003d\"SQLD.TEAM.TEAM_FK\" type\u003d\"fk\" pk-ref\u003d\"2\" fk-ref\u003d\"1\"/\u003e\u003crelation name\u003d\"SCHEDULE_FK\" fq-name\u003d\"SQLD.SCHEDULE.SCHEDULE_FK\" type\u003d\"fk\" pk-ref\u003d\"2\" fk-ref\u003d\"4\"/\u003e\u003c/relations\u003e\u003c/diagram\u003e"
+						}
+					}
+				}
+			}
+		}
+	},
 	"connection-types": {
 		"dev": {
 			"name": "Development",
