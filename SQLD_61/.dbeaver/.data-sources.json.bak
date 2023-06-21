@@ -26,7 +26,6 @@
 			"driver": "oracle_thin",
 			"name": "localhost",
 			"save-password": true,
-			"read-only": true,
 			"configuration": {
 				"host": "localhost",
 				"port": "1521",
@@ -70,6 +69,17 @@
 					"properties": {
 						"erd.diagram.state": {
 							"serialized": "\u003cdiagram version\u003d\"1\" name\u003d\"empty\" time\u003d\"202306141000\"\u003e\u003centities\u003e\u003cdata-source id\u003d\"oracle_thin-1882272cef0-efee999a0012d57\"\u003e\u003centity id\u003d\"1\" name\u003d\"TEAM\" fq-name\u003d\"SQLD.TEAM\" order\u003d\"0\" color-bg\u003d\"255,128,64\" font\u003d\"Segoe UI:9:0\" x\u003d\"321\" y\u003d\"20\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"2\" name\u003d\"STADIUM\" fq-name\u003d\"SQLD.STADIUM\" order\u003d\"1\" font\u003d\"Segoe UI:9:0\" x\u003d\"620\" y\u003d\"96\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"3\" name\u003d\"PLAYER\" fq-name\u003d\"SQLD.PLAYER\" order\u003d\"2\" font\u003d\"Segoe UI:9:0\" x\u003d\"20\" y\u003d\"39\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"4\" name\u003d\"SCHEDULE\" fq-name\u003d\"SQLD.SCHEDULE\" order\u003d\"3\" border-width\u003d\"3\" font\u003d\"Segoe UI:9:0\" x\u003d\"990\" y\u003d\"93\"\u003e\u003cpath name\u003d\"SQLD\"/\u003e\u003c/entity\u003e\u003c/data-source\u003e\u003c/entities\u003e\u003crelations\u003e\u003crelation name\u003d\"PLAYER_FK\" fq-name\u003d\"SQLD.PLAYER.PLAYER_FK\" type\u003d\"fk\" pk-ref\u003d\"1\" fk-ref\u003d\"3\"/\u003e\u003crelation name\u003d\"TEAM_FK\" fq-name\u003d\"SQLD.TEAM.TEAM_FK\" type\u003d\"fk\" pk-ref\u003d\"2\" fk-ref\u003d\"1\"/\u003e\u003crelation name\u003d\"SCHEDULE_FK\" fq-name\u003d\"SQLD.SCHEDULE.SCHEDULE_FK\" type\u003d\"fk\" pk-ref\u003d\"2\" fk-ref\u003d\"4\"/\u003e\u003c/relations\u003e\u003c/diagram\u003e"
+						}
+					}
+				}
+			}
+		},
+		"oracle_thin-188be8cf6e3-5ee5f7809e3fefb9": {
+			"HR": {
+				":DEPARTMENTS": {
+					"properties": {
+						"erd.diagram.state": {
+							"serialized": "\u003cdiagram version\u003d\"1\" name\u003d\"empty\" time\u003d\"202306210848\"\u003e\u003centities\u003e\u003cdata-source id\u003d\"oracle_thin-188be8cf6e3-5ee5f7809e3fefb9\"\u003e\u003centity id\u003d\"1\" name\u003d\"DEPARTMENTS\" fq-name\u003d\"HR.DEPARTMENTS\" order\u003d\"0\" color-bg\u003d\"255,128,64\" font\u003d\"Segoe UI:9:0\" x\u003d\"717\" y\u003d\"130\"\u003e\u003cpath name\u003d\"HR\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"2\" name\u003d\"LOCATIONS\" fq-name\u003d\"HR.LOCATIONS\" order\u003d\"1\" font\u003d\"Segoe UI:9:0\" x\u003d\"1040\" y\u003d\"132\"\u003e\u003cpath name\u003d\"HR\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"3\" name\u003d\"EMPLOYEES\" fq-name\u003d\"HR.EMPLOYEES\" order\u003d\"2\" font\u003d\"Segoe UI:9:0\" x\u003d\"435\" y\u003d\"118\"\u003e\u003cpath name\u003d\"HR\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"4\" name\u003d\"JOB_HISTORY\" fq-name\u003d\"HR.JOB_HISTORY\" order\u003d\"3\" font\u003d\"Segoe UI:9:0\" x\u003d\"438\" y\u003d\"575\"\u003e\u003cpath name\u003d\"HR\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"5\" name\u003d\"JOBS\" fq-name\u003d\"HR.JOBS\" order\u003d\"4\" font\u003d\"Segoe UI:9:0\" x\u003d\"104\" y\u003d\"132\"\u003e\u003cpath name\u003d\"HR\"/\u003e\u003c/entity\u003e\u003centity id\u003d\"6\" name\u003d\"COUNTRIES\" fq-name\u003d\"HR.COUNTRIES\" order\u003d\"5\" font\u003d\"Segoe UI:9:0\" x\u003d\"1069\" y\u003d\"345\"\u003e\u003cpath name\u003d\"HR\"/\u003e\u003c/entity\u003e\u003c/data-source\u003e\u003c/entities\u003e\u003crelations\u003e\u003crelation name\u003d\"EMP_DEPT_FK\" fq-name\u003d\"HR.EMPLOYEES.EMP_DEPT_FK\" type\u003d\"fk\" pk-ref\u003d\"1\" fk-ref\u003d\"3\"/\u003e\u003crelation name\u003d\"JHIST_DEPT_FK\" fq-name\u003d\"HR.JOB_HISTORY.JHIST_DEPT_FK\" type\u003d\"fk\" pk-ref\u003d\"1\" fk-ref\u003d\"4\"/\u003e\u003crelation name\u003d\"DEPT_LOC_FK\" fq-name\u003d\"HR.DEPARTMENTS.DEPT_LOC_FK\" type\u003d\"fk\" pk-ref\u003d\"2\" fk-ref\u003d\"1\"/\u003e\u003crelation name\u003d\"DEPT_MGR_FK\" fq-name\u003d\"HR.DEPARTMENTS.DEPT_MGR_FK\" type\u003d\"fk\" pk-ref\u003d\"3\" fk-ref\u003d\"1\"/\u003e\u003crelation name\u003d\"EMP_MANAGER_FK\" fq-name\u003d\"HR.EMPLOYEES.EMP_MANAGER_FK\" type\u003d\"fk\" pk-ref\u003d\"3\" fk-ref\u003d\"3\"\u003e\u003cbend type\u003d\"rel\" x\u003d\"775\" y\u003d\"362\"/\u003e\u003cbend type\u003d\"rel\" x\u003d\"571\" y\u003d\"423\"/\u003e\u003c/relation\u003e\u003crelation name\u003d\"JHIST_EMP_FK\" fq-name\u003d\"HR.JOB_HISTORY.JHIST_EMP_FK\" type\u003d\"fk\" pk-ref\u003d\"3\" fk-ref\u003d\"4\"/\u003e\u003crelation name\u003d\"EMP_JOB_FK\" fq-name\u003d\"HR.EMPLOYEES.EMP_JOB_FK\" type\u003d\"fk\" pk-ref\u003d\"5\" fk-ref\u003d\"3\"/\u003e\u003crelation name\u003d\"JHIST_JOB_FK\" fq-name\u003d\"HR.JOB_HISTORY.JHIST_JOB_FK\" type\u003d\"fk\" pk-ref\u003d\"5\" fk-ref\u003d\"4\"/\u003e\u003crelation name\u003d\"LOC_C_ID_FK\" fq-name\u003d\"HR.LOCATIONS.LOC_C_ID_FK\" type\u003d\"fk\" pk-ref\u003d\"6\" fk-ref\u003d\"2\"/\u003e\u003c/relations\u003e\u003c/diagram\u003e"
 						}
 					}
 				}
